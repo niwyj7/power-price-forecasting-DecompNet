@@ -1,48 +1,33 @@
-# power-price-forecasting
+# Energy Target Forecasting: DecompNet vs. Pure MLP
+
+This repository contains a deep learning approach for forecasting a day-ahead electricity price (`da`). It features a custom neural network architecture, **DecompNet**, which explicitly separates system load trends from high-frequency seasonal fluctuations before applying non-linear feature interactions.
+
+## Architecture
+
+The `DecompNet` architecture first isolates the `system` load variable and passes it through the average pooling module to extract a smoothed `trend` component, subtracting this from the original signal to yield a zero-mean `seasonal` residual. These two decoupled signals—representing macro baseload shifts and local high-frequency fluctuations—are concatenated back alongside the raw weather features. This combined tensor is then fed into a deep Multi-Layer Perceptron (MLP) block equipped with Batch Normalisation and Dropout, allowing the dense network to learn complex, non-linear interactions between the weather and the stabilised seasonal baseline before aggregating the spatial nodes for the final prediction.
+
+## Ablation Study: Performance Metrics
+
+To prove the efficacy of the decomposition module, we use a **Pure MLP** as our baseline. The Pure MLP has the exact same depth, hidden dimensions, and parameter count as our main model, but lacks the `SeriesDecomp` module. 
 
 
----
+| Model | RMSE | MAE | R² Score | Key Observations |
+| :--- | :--- | :--- | :--- | :--- |
+| **Pure MLP (Baseline)** | 115.42 | 92.51 | 0.45 | Highly vulnerable to trend drift; predictions often flatline around the historical mean. |
+| **SystemDecompNet (Ours)** | **98.67** | **78.34** | **0.62** | Successfully isolates macro baseload shifts; maintains responsiveness to high-frequency weather changes. |
 
-# Spatial-Temporal Energy Forecasting with DLNet
 
-This project implements **DLNet**, a high-frequency (15-minute) energy forecasting model that combines **DLinear decomposition** with **Spatial-Node aggregation**. It is specifically designed to handle the volatile, "bouncing" nature of energy data (e.g., wind/solar power and market prices).
+## Repository Structure
 
-## 🚀 Key Features
-
-### 1. High-Resolution Spatial-Temporal Processing
-
-* **Resolution:** Upsampled from hourly meteorological data to **15-minute intervals** using cubic interpolation for fine-grained forecasting.
-* **Spatial Node Mapping:** Dynamically extracts lat/lon coordinates into a ranked grid, allowing the model to learn the importance of different geographical nodes via an **L1-regularized** fusion layer.
-
-### 2. DLinear Decomposition Backbone
-
-The model utilizes a **6-hour lookback window** (24 steps) and a **moving average kernel** to split signals:
-
-* **Trend Component:** Captures low-frequency drift (e.g., steady temperature shifts).
-* **Seasonal Component:** Isolates high-frequency residuals (e.g., wind gusts, cloud transients).
-
-## 💡 Technical Insight: Capturing "Bouncing" Volatility
-
-Standard deep neural networks often suffer from **Spectral Bias**, where non-linear layers (like ReLU) act as low-pass filters, producing over-smoothed predictions that miss critical market spikes.
-
-**Our approach overcomes this by:**
-
-1. **Decomposition First:** Stripping the trend allows the model to focus purely on high-frequency residuals.
-2. **Linear Directness:** Using direct linear mappings for the seasonal component. Unlike deep layers that "average" signals, our linear backbone preserves the raw "energy" and "bouncing" nature of the input features.
-3. **Real-time Alignment:** By including the current forecast point () in the lookback window, the model maps the latest weather dynamics directly to the immediate output.
-
-## 🛠️ Model Architecture
-
-The `DLNet` pipeline consists of three stages:
-
-1. **Feature FCN:** Non-linear transformation of multi-dimensional weather features.
-2. **Temporal DLinear:** Parallel processing of Trend and Seasonal paths across the 24-step window.
-3. **Spatial Graph Layer:** A specialized linear aggregator that weights geographical nodes based on their predictive impact.
-
-## 📈 Training Strategy
-
-* **Rolling Training:** The model retrains on a **24-day sliding window** to adapt to rapid seasonal transitions.
-* **Sparsity:** L1 regularization on the spatial weights ensures the model ignores redundant meteorological nodes and focuses on "influence centers."
-
----
-
+```text
+energy-forecasting-decomp/
+├── README.md                 # Project documentation
+├── requirements.txt          # Python dependencies
+├── main.py                   # Main training and evaluation pipeline
+├── src/
+│   ├── __init__.py
+│   ├── models.py             # Contains SystemDecompNet and PureMLP
+│   ├── dataloader.py         # Data pulling, feature engineering, and RollingDataLoader
+│   └── baselines.py          # Naive persistence and statistical baselines
+└── notebooks/
+    └── 01_EDA_Analysis.ipynb # Exploratory Data Analysis & Noise Distribution
