@@ -1,0 +1,20 @@
+# Deep Learning Core
+torch>=2.0.0
+
+# Data Manipulation & Scientific Computing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Machine Learning Utilities & Metrics
+scikit-learn>=1.2.0
+
+# Visualization (For Utils & EDA)
+matplotlib>=3.7.0
+
+# Jupyter Environment (For 01_EDA_Analysis.ipynb)
+jupyterlab>=4.0.0
+notebook>=7.0.0
+
+# Optional: If you plan to pull data from a remote DB instead of local CSVs
+# sqlalchemy>=2.0.0
+# pymysql>=1.1.0
