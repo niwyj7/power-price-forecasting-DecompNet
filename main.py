@@ -6,6 +6,7 @@ import torch.nn as nn
 # Assuming dataloader.py remains largely the same, just ensure variable names match
 from src.dataloader import prepare_data, str_date_delta, RollingDataLoader
 from src.models import SystemDecompNet, PureMLP
+from src.utils import print_evaluation_report, plot_predictions
 
 def set_seeds(seed=42):
     torch.manual_seed(seed)
@@ -120,3 +121,24 @@ if __name__ == '__main__':
     for model_name, pred_df in experiment_results.items():
         print(f"\n{model_name}:")
         print(pred_df.resample('h').mean().head(5)) # Display first few hours
+    
+
+    # enddate = target_date.strftime('%Y%m%d')
+    # startdate = str_date_delta(enddate, -CONFIG['train_lookback_dates']) # Or however long your test set is
+    # _, actual_targets = prepare_data(CONFIG['raw_features'], CONFIG['features'], startdate=startdate, enddate=enddate, train=True)
+    
+
+    # actual_targets_hourly = actual_targets.resample('h').mean()
+    
+
+    # print_evaluation_report(actual_targets_hourly, experiment_results)
+    
+   
+    # plot_predictions(
+    #     actual_targets_hourly, 
+    #     experiment_results, 
+    #     title="SystemDecompNet vs PureMLP: Handling Extreme Target Noise",
+    #     save_path="model_comparison_plot.png"
+    # )
+
+
