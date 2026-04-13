@@ -26,7 +26,7 @@ energy-forecasting-decomp/
 ├── main.py                   # Main training and evaluation pipeline
 ├── src/
 │   ├── __init__.py
-│   ├── models.py             # Contains SystemDecompNet and PureMLP
+│   ├── models.py             # Contains DecompNet and PureMLP
 │   └── dataloader.py         # Data pulling, feature engineering, and RollingDataLoader
 └── notebooks/
     └── 01_EDA_Analysis.ipynb # Exploratory Data Analysis & Noise Distribution
