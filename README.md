@@ -1,9 +1,9 @@
-# Energy Target Forecasting: DecompNet vs. Pure MLP
+# Energy Target Forecasting: DecompNet 
 
 This repository contains a deep learning approach for forecasting a day-ahead electricity price (`da`). It features a custom neural network architecture, **DecompNet**, which explicitly separates system load trends from high-frequency seasonal fluctuations before applying non-linear feature interactions.
 
 
-## Ablation Study: Performance Metrics
+## Performance Metrics
 
 To prove the efficacy of the decomposition module, we use a **Pure MLP** as our baseline. The Pure MLP has the same depth, hidden dimensions, and parameter count as our main model, but lacks the `SeriesDecomp` module. 
 
@@ -30,30 +30,23 @@ Our architecture processes data in three distinct phases:
    * **Seasonal:** The zero-mean, high-frequency residual (raw system data minus the trend).
 
 2. **Highly Customizable Feature Interaction (MLP Block):**
-   The local environmental features are concatenated exclusively with the stable **Seasonal** component. This input block is fully modular—you can easily customise the model by adding any relevant exogenous variables such as wind speed, temperature, solar radiation (SSRD), humidity, or temporal encodings. This combined tensor is fed into a deep, fully connected network (MLP) with Batch Normalisation and Dropout. By shielding the MLP from the massive `Trend` values, the network can focus entirely on learning complex, non-linear interactions between your chosen weather patterns and short-term grid fluctuations without suffering from gradient saturation.
+   The local environmental features are concatenated exclusively with the stable **Seasonal** component. This input block is fully modular—you can easily customise the model by adding any relevant exogenous variables such as wind speed, temperature, solar radiation, humidity, or temporal encodings. This combined tensor is fed into a deep, fully connected network (MLP) with Batch Normalisation and Dropout. By shielding the MLP from the massive `Trend` values, the network can focus entirely on learning complex, non-linear interactions between your chosen weather patterns and short-term grid fluctuations without suffering from gradient saturation.
 
 3. **Fixed Baseline Operator (Terminal Node):**
    Instead of passing the `Trend` through the dense layers, it bypasses the network entirely. The predicted fluctuation from the MLP is added to the global `Trend` at the very end of the forward pass. 
 
 ### Mathematical Formulation
 
-Unlike a naive Deep Learning approach ($Y = \text{MLP}(\text{Features}, \text{System})$), our forward pass acts as a modular residual equation:
+Unlike a naive Deep Learning approach, the forward pass acts as a modular residual equation:
 
 $$Y_{pred} = \text{MLP}([\text{Wind}, \text{Solar}, \text{Temp...}], \text{System}_{seasonal}) + \text{System}_{trend}$$
 
 *Note: A highly constrained, learnable scale and bias parameter is applied to the final trend operator to allow the network to seamlessly align the 'system load' feature scale with the final target scale.*
 
-## Repository Structure
 
-```text
-energy-forecasting-decomp/
-├── README.md                 # Project documentation
-├── requirements.txt          # Python dependencies
-├── main.py                   # Main training and evaluation pipeline
-├── src/
-│   ├── __init__.py
-│   ├── models.py             # Contains DecompNet and PureMLP
-│   └── dataloader.py         # Data pulling, feature engineering, and RollingDataLoader
-└── notebooks/
-    └── 01_EDA_Analysis.ipynb # Exploratory Data Analysis & Noise Distribution
+### Reference
+
+Are Transformers Effective for Time Series Forecasting? Ailing Zeng, Muxi Chen, Lei Zhang, Qiang Xu Proceedings of the AAAI Conference on Artificial Intelligence, 2023.
+
+Read the paper on https://arxiv.org/abs/2205.13504
 
