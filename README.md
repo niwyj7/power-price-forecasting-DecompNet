@@ -1,6 +1,6 @@
 # Energy Target Forecasting: DecompNet 
 
-This repository contains a deep learning approach for forecasting a day-ahead electricity price (`da`). It features a custom neural network architecture, **DecompNet**, which explicitly separates system load trends from high-frequency seasonal fluctuations before applying non-linear feature interactions.
+This repository contains a deep learning approach for forecasting a day-ahead electricity price (`da`). It features a custom neural network architecture, **DecompNet**, which explicitly separates feature trends from high-frequency fluctuations before applying non-linear feature interactions.
 
 
 ## Performance Metrics
@@ -18,7 +18,7 @@ To prove the efficacy of the decomposition module, we use a **Pure MLP** as our 
 
 Traditional Multi-Layer Perceptrons (MLPs) struggle with highly noisy time-series data because massive macro-trend shifts (e.g., seasonal baseload changes) produce massive gradients that drown out the subtle, high-frequency impacts of weather variables. 
 
-**DecompNet** solves this by reframing the deep learning task as **residual forecasting**. Instead of asking the network to predict on the absolute system energy load, the network is trained to predict the weather-driven fluctuations layered on top of a stable macro-trend.
+**DecompNet** solves this by reframing the deep learning task as **residual forecasting**. Instead of asking the network to predict on the absolute system energy load, the network is trained to predict the weather-driven fluctuations layered on top of a stable macro-trend. The linear feature should be **constructed** through **EDA**, with a proven strong enough **linear correlation** with the target variable, considering noise in your data.
 
 ### The Pipeline
 
