@@ -43,10 +43,17 @@ $$Y_{pred} = \text{MLP}([\text{Wind}, \text{Solar}, \text{Temp...}], \text{Syste
 
 *Note: A highly constrained, learnable scale and bias parameter is applied to the final trend operator to allow the network to seamlessly align the 'system load' feature scale with the final target scale.*
 
-
 ### Reference
 
-Are Transformers Effective for Time Series Forecasting? Ailing Zeng, Muxi Chen, Lei Zhang, Qiang Xu Proceedings of the AAAI Conference on Artificial Intelligence, 2023.
+Are Transformers Effective for Time Series Forecasting? Ailing Zeng, Muxi Chen, Lei Zhang, Qiang Xu Proceedi
+ngs of the AAAI Conference on Artificial Intelligence, 2023.
 
 Read the paper on https://arxiv.org/abs/2205.13504
+
+
+### Exploring Features
+
+<img width="715" height="450" alt="aefd50cb-d913-43a3-b262-a50fa4a8a17b" src="https://github.com/user-attachments/assets/7718f204-d73b-4127-9272-992f48bda692" />
+<br>
+<img width="715" height="450" alt="bf427890-5338-4436-b00f-0042f2a425ea" src="https://github.com/user-attachments/assets/806109c3-b9c0-488a-8fa5-b73cb15b8946" />
 
