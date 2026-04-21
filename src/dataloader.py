@@ -3,17 +3,17 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from sklearn.preprocessing import StandardScaler
-from EnergyDataLoader.energydataloader import EnergyDataLoader
-from EnergySQL.energysql import EnergySQL
+# import EnergyDataLoader
+# import EnergySQL
 
-esql = EnergySQL("shaanxi", "Shaanxi_Weather_s3")
-ed = EnergyDataLoader('shaanxi')
+esql = EnergySQL("location", "location_Weather")
+ed = EnergyDataLoader('location')
 
 def str_date_delta(date='20250201', date_delta=-30):
     return (pd.Timestamp(date) + pd.Timedelta(days=date_delta)).strftime('%Y%m%d')
 
 def select_features(features=[], NN=0, startdate='20250101', enddate='20250131'):
-    df_train = esql.select(features, start=startdate, end=enddate, NN=NN)
+    df_train = # your code
     df_train['latitude'] = pd.to_numeric(df_train.index.get_level_values('latlon').str.extract(r'(\d+\.\d+)N', expand=False), errors='coerce')
     df_train['longitude'] = pd.to_numeric(df_train.index.get_level_values('latlon').str.extract(r'(\d+\.\d+)E', expand=False), errors='coerce')
     df_train.reset_index(inplace=True)
@@ -57,25 +57,20 @@ def feature_engineering(df_train):
     return df_train
 
 def prepare_data(raw_features=[], features=[], NN=0, startdate='20250101', enddate='20250131', train=True):
-    # 1. Base Weather Features
     df_feature = select_features(features=raw_features, NN=NN,
                                  startdate=str_date_delta(startdate, -1), enddate=enddate)
     df_feature = get_node_idx(df_feature)
     df_feature = feature_engineering(df_feature)
     
-    # Ensure MultiIndex: [datetime, idx]
     df_feature_ = df_feature[features + ['idx']].set_index('idx', append=True).sort_index()
 
-    # 2. Add 'System' data globally (broadcasted to all nodes)
-    sys_data = ed.pull(['system'], start=str_date_delta(startdate, -1), end=enddate)
+    sys_data = ed.pull(['system'], start=str_date_delta(startdate, -1), end=enddate) #replace by your code
     sys_data.columns = ['system']
     
-    # Join system data on datetime (level 0 of multi-index)
     sys_data_reindexed = sys_data.reindex(df_feature_.index.get_level_values(0))
     df_feature_['system'] = sys_data_reindexed['system'].values
     df_feature_['system'] = df_feature_['system'].ffill().bfill() # Handle missing values
 
-    # 3. Pull Targets
     if train:
         y_ = ed.pull(['da'], start=startdate, end=enddate)
         y_ = y_.where(y_ != 0, -400)
