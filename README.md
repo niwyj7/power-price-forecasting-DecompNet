@@ -1,4 +1,4 @@
-# Energy Target Forecasting: DecompNet 
+# Energy Forecasting: DecompNet 
 
 This repository contains a deep learning approach for forecasting a day-ahead electricity price (`da`). It features a custom neural network architecture, **DecompNet**, which explicitly separates feature trends from high-frequency fluctuations before applying non-linear feature interactions.
 
