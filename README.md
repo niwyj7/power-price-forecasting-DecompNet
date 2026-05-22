@@ -59,3 +59,5 @@ Read the paper on https://arxiv.org/abs/2205.13504
 <br>
 <img width="715" height="450" alt="bf427890-5338-4436-b00f-0042f2a425ea" src="https://github.com/user-attachments/assets/806109c3-b9c0-488a-8fa5-b73cb15b8946" />
 
+Transform to linear format.
+
